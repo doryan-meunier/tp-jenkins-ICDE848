@@ -186,15 +186,23 @@ pipeline {
         }
         */
 
-        // ── Stage 9 : Déploiement ─────────────────────
-        // (Décommenter et adapter à votre contexte)
-        /*
-        stage('Deploy') {
+        // ── Stage 9 : Déploiement Staging (toutes branches sauf main) ──
+        stage('Deploy Staging') {
+            when { not { branch 'main' } }
             steps {
-                sh "./deploy.sh ${params.ENVIRONMENT}"
+                echo "Déploiement en STAGING depuis la branche ${env.GIT_BRANCH}"
+                // sh './deploy.sh staging'
             }
         }
-        */
+
+        // ── Stage 10 : Déploiement Production (main uniquement) ──
+        stage('Deploy PROD') {
+            when { branch 'main' }
+            steps {
+                echo "Déploiement en PRODUCTION depuis main"
+                // sh './deploy.sh production'
+            }
+        }
 
     } // fin stages
 
