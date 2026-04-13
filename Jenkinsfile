@@ -244,7 +244,7 @@ URL     : ${env.BUILD_URL}
 
 Consulter les logs : ${env.BUILD_URL}console
                 """,
-                to:          'equipe-dev@monentreprise.fr',
+                to:          'doryan.meunier@gmail.com',
                 attachLog:   true
             )
         }
@@ -254,7 +254,7 @@ Consulter les logs : ${env.BUILD_URL}console
             emailext(
                 subject: "✅ FIXED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body:    "Le build est de nouveau stable : ${env.BUILD_URL}",
-                to:      'equipe-dev@monentreprise.fr'
+                to:      'doryan.meunier@gmail.com'
             )
         }
 
