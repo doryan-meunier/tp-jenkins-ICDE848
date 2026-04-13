@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+  "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+  "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+    Configuration Checkstyle – ICDE848 TP Jenkins
+    Placer ce fichier à la RACINE du projet (même niveau que pom.xml)
+
+    Règles activées : nommage, longueur, qualité de base
+    failOnViolation = false dans pom.xml → génère le rapport sans casser le build
+-->
+
+<module name="Checker">
+    <property name="severity" value="warning"/>
+    <property name="fileExtensions" value="java"/>
+
+    <module name="TreeWalker">
+
+        <!-- ─────────────────────────────────
+             NOMMAGE
+             Violation courante : variable nommée "X" ou "temp"
+        ───────────────────────────────── -->
+
+        <!-- Classes et interfaces : PascalCase ex: CommandeService ✅ -->
+        <module name="TypeName"/>
+
+        <!-- Méthodes : camelCase ex: calculerTotal() ✅ -->
+        <module name="MethodName"/>
+
+        <!-- Variables locales : camelCase ex: totalCommande ✅ -->
+        <module name="LocalVariableName"/>
+
+        <!-- Constantes : SCREAMING_SNAKE_CASE ex: MAX_QUANTITE ✅ -->
+        <module name="ConstantName"/>
+
+        <!-- ─────────────────────────────────
+             LONGUEUR
+             Violation courante : méthode trop longue = difficile à tester
+        ───────────────────────────────── -->
+
+        <!-- Ligne max 120 caractères -->
+        <module name="LineLength">
+            <property name="max" value="120"/>
+        </module>
+
+        <!-- Méthode max 50 lignes -->
+        <module name="MethodLength">
+            <property name="max" value="50"/>
+        </module>
+
+        <!-- Nombre de paramètres max 7 -->
+        <module name="ParameterNumber">
+            <property name="max" value="7"/>
+        </module>
+
+        <!-- ─────────────────────────────────
+             QUALITÉ DE CODE
+             Violations courantes à corriger
+        ───────────────────────────────── -->
+
+        <!-- Interdit les blocs catch vides : catch(Exception e) {} -->
+        <module name="EmptyCatchBlock"/>
+
+        <!-- Interdit les imports inutilisés -->
+        <module name="UnusedImports"/>
+
+        <!-- Interdit les imports avec wildcard : import java.util.* -->
+        <module name="AvoidStarImport"/>
+
+        <!-- Si on override equals(), on DOIT override hashCode() -->
+        <module name="EqualsHashCode"/>
+
+        <!-- Interdit de modifier les paramètres d'une méthode -->
+        <module name="ParameterAssignment"/>
+
+        <!-- ─────────────────────────────────
+             ACCOLADES ET ESPACEMENT
+        ───────────────────────────────── -->
+
+        <!-- Accolades obligatoires même pour if d'une ligne -->
+        <module name="NeedBraces"/>
+
+        <!-- Accolades en style Java standard (fin de ligne) -->
+        <module name="LeftCurly"/>
+        <module name="RightCurly"/>
+
+    </module>
+
+</module>
+
+<!--
+═══════════════════════════════════════════════════════
+VIOLATIONS FRÉQUENTES ET COMMENT LES CORRIGER
+═══════════════════════════════════════════════════════
+
+❌ TypeName : "commandeService" au lieu de "CommandeService"
+   → Renommer la classe avec une majuscule
+
+❌ UnusedImports : import java.util.List; sans utiliser List
+   → Supprimer l'import (IDE : Ctrl+Shift+O dans Eclipse)
+
+❌ EmptyCatchBlock : catch (Exception e) { }
+   → Ajouter au minimum un log : catch (Exception e) { e.printStackTrace(); }
+
+❌ NeedBraces : if (x > 0) return true;
+   → Ajouter les accolades : if (x > 0) { return true; }
+
+❌ EqualsHashCode : @Override public boolean equals(...) sans hashCode()
+   → Générer hashCode() via l'IDE (clic droit → Source → Generate hashCode)
+
+❌ LineLength : ligne de 150 caractères
+   → Couper sur plusieurs lignes
+
+═══════════════════════════════════════════════════════
+-->

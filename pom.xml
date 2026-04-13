@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ═══════════════════════════════════════════
+         IDENTITÉ DU PROJET
+    ═══════════════════════════════════════════ -->
+    <groupId>fr.epsi</groupId>
+    <artifactId>tp-jenkins</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>TP Jenkins - Boutique en ligne ICDE848</name>
+
+    <!-- ═══════════════════════════════════════════
+         PROPRIÉTÉS GLOBALES
+         Modifier les versions ici uniquement
+    ═══════════════════════════════════════════ -->
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <junit.version>5.10.0</junit.version>
+        <mockito.version>5.5.0</mockito.version>
+        <jacoco.version>0.8.11</jacoco.version>
+        <checkstyle.version>3.3.0</checkstyle.version>
+        <pmd.version>3.21.0</pmd.version>
+        <spotbugs.version>4.8.2.0</spotbugs.version>
+        <failsafe.version>3.2.5</failsafe.version>
+        <surefire.version>3.2.5</surefire.version>
+    </properties>
+
+    <!-- ═══════════════════════════════════════════
+         DÉPENDANCES
+    ═══════════════════════════════════════════ -->
+    <dependencies>
+
+        <!-- JUnit 5 — framework de tests unitaires et d'intégration -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito — créer des mocks dans les tests unitaires -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ═══════════════════════════════════════════
+         PLUGINS DE BUILD
+    ═══════════════════════════════════════════ -->
+    <build>
+        <plugins>
+
+            <!-- ─────────────────────────────────
+                 SUREFIRE — Tests unitaires
+                 Lancé automatiquement par : mvn test
+                 Fichiers cibles : *Test.java
+                 Rapport : target/surefire-reports/*.xml
+            ───────────────────────────────── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- ─────────────────────────────────
+                 FAILSAFE — Tests d'intégration
+                 Lancé automatiquement par : mvn verify
+                 Fichiers cibles : *IT.java
+                 Rapport : target/failsafe-reports/*.xml
+            ───────────────────────────────── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ─────────────────────────────────
+                 JACOCO — Couverture de code
+                 Lancé automatiquement dans : mvn verify
+                 Rapport HTML : target/site/jacoco/index.html
+                 Rapport XML  : target/site/jacoco/jacoco.xml
+                 Seuil minimum : 70% de couverture de lignes
+            ───────────────────────────────── -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <!-- OBLIGATOIRE : démarre l'agent avant les tests -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <!-- Génère le rapport après les tests -->
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                    <!-- Fait échouer le build si couverture < 70% -->
+                    <execution>
+                        <id>check</id>
+                        <goals><goal>check</goal></goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.70</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ─────────────────────────────────
+                 CHECKSTYLE — Conventions de code
+                 Lancé par : mvn checkstyle:checkstyle
+                 Config    : checkstyle.xml (à la racine)
+                 Rapport   : target/checkstyle-result.xml
+            ───────────────────────────────── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <failOnViolation>false</failOnViolation>
+                    <outputFile>${project.build.directory}/checkstyle-result.xml</outputFile>
+                </configuration>
+            </plugin>
+
+            <!-- ─────────────────────────────────
+                 PMD + CPD — Bugs potentiels + duplication
+                 Lancé par : mvn pmd:pmd pmd:cpd
+                 Rapports  : target/pmd.xml + target/cpd.xml
+                 CPD seuil : 50 tokens dupliqués minimum
+            ───────────────────────────────── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${pmd.version}</version>
+                <configuration>
+                    <failOnViolation>false</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
+                    <minimumTokens>50</minimumTokens>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- ─────────────────────────────────
+                 SPOTBUGS — Bugs dans le bytecode compilé
+                 Lancé par : mvn spotbugs:spotbugs
+                 Rapport   : target/spotbugsXml.xml
+                 Successeur officiel de FindBugs
+            ───────────────────────────────── -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.version}</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <xmlOutput>true</xmlOutput>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
+
+<!--
+═══════════════════════════════════════════════════════
+COMMANDES MAVEN À RETENIR
+═══════════════════════════════════════════════════════
+
+mvn clean test
+  → Compile + tests unitaires uniquement (*Test.java)
+
+mvn clean verify
+  → Compile + tests unitaires + intégration + JaCoCo
+
+mvn checkstyle:checkstyle
+  → Génère target/checkstyle-result.xml
+
+mvn pmd:pmd pmd:cpd
+  → Génère target/pmd.xml et target/cpd.xml
+
+mvn spotbugs:spotbugs
+  → Génère target/spotbugsXml.xml
+
+mvn clean verify checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs
+  → TOUT : build + tests + couverture + qualité complète
+  → C'est cette commande qui est utilisée dans le Jenkinsfile
+
+═══════════════════════════════════════════════════════
+-->
