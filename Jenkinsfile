@@ -225,14 +225,9 @@ pipeline {
     // ─────────────────────────────────────────────────
     post {
 
-        // Toujours exécuté (succès ou échec) — TEST EMAIL temporaire
+        // Toujours exécuté (succès ou échec)
         always {
             echo "Pipeline terminée — statut : ${currentBuild.currentResult}"
-            emailext(
-                subject: "TEST: ${env.JOB_NAME} #${env.BUILD_NUMBER} — ${currentBuild.currentResult}",
-                body: "Build ${currentBuild.currentResult}.\n\nURL : ${env.BUILD_URL}",
-                to: 'doryan.meunier@gmail.com'
-            )
         }
 
         // Seulement en cas d'échec
